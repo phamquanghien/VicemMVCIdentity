@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using VicemMVCIdentity.Models;
+using VicemMVCIdentity.Models.Entities;
 
 namespace VicemMVCIdentity.Data;
 
@@ -11,6 +12,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         : base(options)
     {
     }
+
+    public DbSet<Employee> Employee { get; set; } = default!;
     // protected override void OnModelCreating(ModelBuilder builder)
     // {
     //     base.OnModelCreating(builder);

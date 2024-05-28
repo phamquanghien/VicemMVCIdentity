@@ -20,8 +20,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddTransient<EmployeeSeeder>();
 var app = builder.Build();
+using(var scope = app.Services.CreateAsyncScope())
+{
+    var services = scope.ServiceProvider;
+    var seeder = services.GetRequiredService<EmployeeSeeder>();
+    seeder.SeedEmployees(100);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
