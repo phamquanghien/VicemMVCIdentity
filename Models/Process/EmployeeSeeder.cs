@@ -12,9 +12,13 @@ namespace VicemMVCIdentity.Models.Process
         }
         public void SeedEmployees(int n)
         {
-            var employees = GenerateEmployees(n);
-            _context.Employee.AddRange(employees);
-            _context.SaveChanges();
+            var countEmployee = _context.Employee.Count();
+            if (countEmployee == 0)
+            {
+                var employees = GenerateEmployees(n);
+                _context.Employee.AddRange(employees);
+                _context.SaveChanges();
+            }
         }
         private List<Employee> GenerateEmployees(int n)
         {
