@@ -4,6 +4,7 @@ using VicemMVCIdentity.Data;
 using VicemMVCIdentity.Models;
 using VicemMVCIdentity.Models.Process;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOptions();
@@ -20,6 +21,11 @@ builder.Services.AddRazorPages();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Role", policy => policy.RequireClaim("Role", "AdminOnly"));
+    options.AddPolicy("Permission", policy => policy.RequireClaim("Role", "EmployeeOnly"));
+});
 builder.Services.AddTransient<EmployeeSeeder>();
 builder.Services.ConfigureApplicationCookie(options =>
 {

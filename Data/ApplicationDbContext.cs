@@ -14,6 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<Employee> Employee { get; set; } = default!;
+    public DbSet<MemberUnit> MemberUnit { get; set; } = default!;
     // protected override void OnModelCreating(ModelBuilder builder)
     // {
     //     base.OnModelCreating(builder);

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,38 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(model);
         }
+        public async Task<IActionResult> AddClaim(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var model = new UserClaimVM(userId, user.UserName, userClaims.ToList());
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddClaim(string userId, string claimType, string claimValue)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var result = await _userManager.AddClaimAsync(user, new Claim(claimType, claimValue));
+            if (result.Succeeded)
+            {
+                return RedirectToAction("AddClaim", new { userId });
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteClaim(string userId, string claimType, string claimValue)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var claim = (await _userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == claimType && c.Value == claimValue);
+            if (claim != null)
+            {
+                await _userManager.RemoveClaimAsync(user, claim);
+            }
+
+            // Chuyển hướng người dùng về trang AddClaim
+            return RedirectToAction("AddClaim", new { userId });
+        }
+
     }
 }
 
