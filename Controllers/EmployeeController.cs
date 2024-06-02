@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VicemMVCIdentity.Data;
 using VicemMVCIdentity.Models.Entities;
+using VicemMVCIdentity.Models.Process;
 
 namespace VicemMVCIdentity.Controllers
 {
-    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,32 +15,17 @@ namespace VicemMVCIdentity.Controllers
             _context = context;
         }
         // GET: Employee
+        [Authorize(Policy = nameof(SystemPermissions.EmployeeView))]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Employee.ToListAsync());
         }
-        [Authorize(Roles = "Employee")]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _context.Employee
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            return View(employee);
-        }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = nameof(SystemPermissions.EmployeeCreate))]
         public IActionResult Create()
         {
             return View();
         }
+        [Authorize(Policy = nameof(SystemPermissions.EmployeeCreate))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EmployeeId,FirstName,LastName,Address,DateOfBirth,Position,Email,HireDate")] Employee employee)
@@ -58,7 +38,7 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(employee);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = nameof(SystemPermissions.EmployeeEdit))]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,6 +53,7 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(employee);
         }
+        [Authorize(Policy = nameof(SystemPermissions.EmployeeEdit))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FirstName,LastName,Address,DateOfBirth,Position,Email,HireDate")] Employee employee)
@@ -104,8 +85,7 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(employee);
         }
-
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = nameof(SystemPermissions.EmployeeDelete))]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -122,6 +102,7 @@ namespace VicemMVCIdentity.Controllers
 
             return View(employee);
         }
+        [Authorize(Policy = nameof(SystemPermissions.EmployeeDelete))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

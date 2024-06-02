@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VicemMVCIdentity.Models;
+using VicemMVCIdentity.Models.Process;
 using VicemMVCIdentity.Models.ViewModels;
 
 namespace VicemMVCIdentity.Controllers
 {
-    [Authorize(Policy = "PolicyByPhoneNumber")]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -18,6 +18,8 @@ namespace VicemMVCIdentity.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
+        
+        [Authorize(Policy = nameof(SystemPermissions.AccountView))]
         public async Task<ActionResult> Index()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -31,6 +33,8 @@ namespace VicemMVCIdentity.Controllers
 
             return View(usersWithRoles);
         }
+        
+        [Authorize(Policy = nameof(SystemPermissions.AssignRole))]
         public async Task<IActionResult> AssignRole(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -48,6 +52,8 @@ namespace VicemMVCIdentity.Controllers
             };
             return View(viewModel);
         }
+        
+        [Authorize(Policy = nameof(SystemPermissions.AssignRole))]
         [HttpPost]
         public async Task<IActionResult> AssignRole(AssignRoleVM model)
         {
@@ -78,6 +84,8 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(model);
         }
+        
+        [Authorize(Policy = nameof(SystemPermissions.AddClaim))]
         public async Task<IActionResult> AddClaim(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -85,6 +93,8 @@ namespace VicemMVCIdentity.Controllers
             var model = new UserClaimVM(userId, user.UserName, userClaims.ToList());
             return View(model);
         }
+        
+        [Authorize(Policy = nameof(SystemPermissions.AddClaim))]
         [HttpPost]
         public async Task<IActionResult> AddClaim(string userId, string claimType, string claimValue)
         {
@@ -96,6 +106,8 @@ namespace VicemMVCIdentity.Controllers
             }
             return View();
         }
+        
+        [Authorize(Policy = nameof(SystemPermissions.DeleteClaim))]
         [HttpPost]
         public async Task<IActionResult> DeleteClaim(string userId, string claimType, string claimValue)
         {
@@ -109,7 +121,6 @@ namespace VicemMVCIdentity.Controllers
             // Chuyển hướng người dùng về trang AddClaim
             return RedirectToAction("AddClaim", new { userId });
         }
-
     }
 }
 

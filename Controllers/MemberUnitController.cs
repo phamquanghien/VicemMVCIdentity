@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VicemMVCIdentity.Data;
 using VicemMVCIdentity.Models.Entities;
+using VicemMVCIdentity.Models.Process;
 
 namespace VicemMVCIdentity.Controllers
 {
-    [Authorize(Policy = "PolicyEmployee")]
     public class MemberUnitController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,31 +21,12 @@ namespace VicemMVCIdentity.Controllers
             _context = context;
         }
 
-        // GET: MemberUnit
+        [Authorize(Policy = nameof(SystemPermissions.MemberUnitView))]
         public async Task<IActionResult> Index()
         {
             return View(await _context.MemberUnit.ToListAsync());
         }
-
-        // GET: MemberUnit/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var memberUnit = await _context.MemberUnit
-                .FirstOrDefaultAsync(m => m.MemberUnitId == id);
-            if (memberUnit == null)
-            {
-                return NotFound();
-            }
-
-            return View(memberUnit);
-        }
-
-        [Authorize(Policy = "PolicyAdmin")]
+        [Authorize(Policy = nameof(SystemPermissions.MemberUnitCreate))]
         public IActionResult Create()
         {
             var listMemberUnit = new List<MemberUnit>
@@ -69,10 +50,7 @@ namespace VicemMVCIdentity.Controllers
             catch { }
             return View();
         }
-
-        // POST: MemberUnit/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = nameof(SystemPermissions.MemberUnitCreate))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MemberUnitId,Name,Address,PhoneNumber,WebsiteUrl")] MemberUnit memberUnit)
@@ -85,8 +63,7 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(memberUnit);
         }
-
-        // GET: MemberUnit/Edit/5
+        [Authorize(Policy = nameof(SystemPermissions.MemberUnitEdit))]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -101,10 +78,7 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(memberUnit);
         }
-
-        // POST: MemberUnit/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = nameof(SystemPermissions.MemberUnitEdit))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MemberUnitId,Name,Address,PhoneNumber,WebsiteUrl")] MemberUnit memberUnit)
@@ -136,8 +110,7 @@ namespace VicemMVCIdentity.Controllers
             }
             return View(memberUnit);
         }
-
-        // GET: MemberUnit/Delete/5
+        [Authorize(Policy = nameof(SystemPermissions.MemberUnitDelete))]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -154,8 +127,7 @@ namespace VicemMVCIdentity.Controllers
 
             return View(memberUnit);
         }
-
-        // POST: MemberUnit/Delete/5
+        [Authorize(Policy = nameof(SystemPermissions.MemberUnitDelete))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

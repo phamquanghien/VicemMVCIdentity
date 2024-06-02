@@ -28,11 +28,18 @@ internal class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("Role", policy => policy.RequireClaim("Role", "AdminOnly"));
-            options.AddPolicy("Permission", policy => policy.RequireClaim("Role", "EmployeeOnly"));
-            options.AddPolicy("PolicyAdmin", policy => policy.RequireRole("Admin"));
-            options.AddPolicy("PolicyEmployee", policy => policy.RequireRole("Employee"));
-            options.AddPolicy("PolicyByPhoneNumber", policy => policy.Requirements.Add(new PolicyByPhoneNumberRequirement()));
+            foreach (var permission in Enum.GetValues(typeof(SystemPermissions)).Cast<SystemPermissions>())
+            {
+                options.AddPolicy(permission.ToString(), policy =>
+                    policy.RequireClaim("Permission", permission.ToString()));
+            }
+            // options.AddPolicy("ViewEmployee", policy => policy.RequireClaim("Employee", "Index"));
+            // options.AddPolicy("CreateEmployee", policy => policy.RequireClaim("Employee", "Create"));
+            // options.AddPolicy("Role", policy => policy.RequireClaim("Role", "AdminOnly"));
+            // options.AddPolicy("Permission", policy => policy.RequireClaim("Role", "EmployeeOnly"));
+            // options.AddPolicy("PolicyAdmin", policy => policy.RequireRole("Admin"));
+            // options.AddPolicy("PolicyEmployee", policy => policy.RequireRole("Employee"));
+            // options.AddPolicy("PolicyByPhoneNumber", policy => policy.Requirements.Add(new PolicyByPhoneNumberRequirement()));
         });
         builder.Services.AddSingleton<IAuthorizationHandler, PolicyByPhoneNumberHandler>();
         builder.Services.AddTransient<EmployeeSeeder>();
