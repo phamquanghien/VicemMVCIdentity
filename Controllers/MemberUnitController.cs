@@ -11,7 +11,7 @@ using VicemMVCIdentity.Models.Entities;
 
 namespace VicemMVCIdentity.Controllers
 {
-    [Authorize(Policy = "Permission")]
+    [Authorize(Policy = "PolicyEmployee")]
     public class MemberUnitController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -45,7 +45,7 @@ namespace VicemMVCIdentity.Controllers
             return View(memberUnit);
         }
 
-        [Authorize(Policy = "Permission")]
+        [Authorize(Policy = "PolicyAdmin")]
         public IActionResult Create()
         {
             var listMemberUnit = new List<MemberUnit>

@@ -5,6 +5,7 @@
     <thead>
         <tr>
             <th>Username</th>
+            <th>PhoneNumber</th>
             <th>Roles</th>
             <th>Action</th>
         </tr>
@@ -14,6 +15,7 @@
         {
             <tr>
                 <td>@userWithRoles.User.UserName</td>
+                <td>@userWithRoles.User.PhoneNumber</td>
                 <td>
                     @foreach (var role in userWithRoles.Roles)
                     {
@@ -22,8 +24,10 @@
                     }
                 </td>
                 <td>
-                    <a asp-controller="Account" asp-action="AssignRole" asp-route-userId="@userWithRoles.User.Id">Assign Role</a> |
-                    <a asp-controller="Account" asp-action="AddClaim" asp-route-userId="@userWithRoles.User.Id">Add Claim</a>
+                    <a asp-controller="Account" asp-action="AssignRole" asp-route-userId="@userWithRoles.User.Id">Assign
+                        Role</a> |
+                    <a asp-controller="Account" asp-action="AddClaim" asp-route-userId="@userWithRoles.User.Id">Add
+                        Claim</a>
                 </td>
             </tr>
         }
