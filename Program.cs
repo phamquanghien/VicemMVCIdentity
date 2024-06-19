@@ -4,7 +4,6 @@ using VicemMVCIdentity.Data;
 using VicemMVCIdentity.Models;
 using VicemMVCIdentity.Models.Process;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.AspNetCore.Authorization;
 
 internal class Program
@@ -12,6 +11,7 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var config = builder.Configuration;
         builder.Services.AddOptions();
         var mailSettings = builder.Configuration.GetSection("MailSettings");
         builder.Services.Configure<MailSettings>(mailSettings);
@@ -24,8 +24,15 @@ internal class Program
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
         builder.Services.AddRazorPages();
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
         builder.Services.AddControllersWithViews();
+        builder.Services.AddAuthentication()
+            .AddGoogle(option =>
+            {
+                option.ClientId = config["Authentication:Google:ClientId"];
+                option.ClientSecret = config["Authentication:Google:ClientSecret"];
+            });
         builder.Services.AddAuthorization(options =>
         {
             foreach (var permission in Enum.GetValues(typeof(SystemPermissions)).Cast<SystemPermissions>())

@@ -85,8 +85,10 @@ namespace VicemMVCIdentity.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+            [Required]
+            public string FullName { get; set; }
         }
-        
+
         public IActionResult OnGet() => RedirectToPage("./Login");
 
         public IActionResult OnPost(string provider, string returnUrl = null)
@@ -153,6 +155,7 @@ namespace VicemMVCIdentity.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                user.FullName = Input.FullName;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -180,7 +183,8 @@ namespace VicemMVCIdentity.Areas.Identity.Pages.Account
                         // If account confirmation is required, we need to show the link if we don't have a real email sender
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
+                            // return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
+                            return LocalRedirect(returnUrl);
                         }
 
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
