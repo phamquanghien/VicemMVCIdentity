@@ -32,6 +32,11 @@ internal class Program
             {
                 option.ClientId = config["Authentication:Google:ClientId"];
                 option.ClientSecret = config["Authentication:Google:ClientSecret"];
+            })
+            .AddFacebook(options =>
+            {
+                options.ClientId = config["Authentication:Facebook:ClientID"];
+                options.ClientSecret = config["Authentication:Facebook:ClientSecret"];
             });
         builder.Services.AddAuthorization(options =>
         {
